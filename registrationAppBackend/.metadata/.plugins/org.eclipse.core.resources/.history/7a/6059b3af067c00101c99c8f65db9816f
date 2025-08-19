@@ -1,0 +1,5 @@
+package com.registrationAppBackend.service;
+
+public class UserService {
+
+}

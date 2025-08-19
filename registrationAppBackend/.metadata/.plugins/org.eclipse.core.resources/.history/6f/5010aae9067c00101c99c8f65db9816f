@@ -1,0 +1,5 @@
+package com.registrationAppBackend.controller;
+
+public class UserController {
+
+}

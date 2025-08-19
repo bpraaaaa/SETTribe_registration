@@ -1,0 +1,5 @@
+package com.registrationAppBackend.entity;
+
+public class Admission {
+
+}

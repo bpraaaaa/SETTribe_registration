@@ -1,0 +1,64 @@
+package com.registrationAppBackend.service;
+
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.registrationAppBackend.entity.Admission;
+import com.registrationAppBackend.entity.User;
+import com.registrationAppBackend.repo.AdmissionRepo;
+import com.registrationAppBackend.repo.UserRepo;
+
+@Service
+public class AdmissionService {
+	
+	@Autowired
+	UserRepo userRepo;
+	
+	@Autowired
+	AdmissionRepo admRepo;
+	
+	public Admission getAdmissionByUserId(int sentId){
+		Optional<User> foundUser = userRepo.findById(sentId);
+		if(foundUser.isPresent()) {
+			return admRepo.findByUser(foundUser);
+		}
+		else {
+			return null;
+		}
+	}
+	
+	public Admission addAdmission(int user_id, Admission sentAdmission) {
+		sentAdmission.setUser(userRepo.getById(user_id));
+		return admRepo.save(sentAdmission);
+	}
+	
+	public Admission updateAdmission(int user_id, Admission sentAdmission) {
+		Optional<User> foundUser = userRepo.findById(user_id);
+		if(foundUser.isPresent()) {
+			Admission foundAdm = admRepo.findByUser(foundUser);
+			
+			foundAdm.setAadhaar(sentAdmission.getAadhaar());
+			foundAdm.setAddr(sentAdmission.getAddr());
+			foundAdm.setCaste(sentAdmission.getCaste());
+			foundAdm.setCaste_cate(sentAdmission.getCaste_cate());
+			foundAdm.setDistrict(sentAdmission.getDistrict());
+			foundAdm.setDob(sentAdmission.getDob());
+			foundAdm.setGender(sentAdmission.getGender());
+			foundAdm.setHandicap(sentAdmission.isHandicap());
+			foundAdm.setMother(sentAdmission.getMother());
+			foundAdm.setPin(sentAdmission.getPin());
+			foundAdm.setReligion(sentAdmission.getReligion());
+			foundAdm.setState(sentAdmission.getState());
+			foundAdm.setTaluka(sentAdmission.getTaluka());
+			foundAdm.setTitle(sentAdmission.getTitle());
+			foundAdm.setUser(sentAdmission.getUser());
+			
+			return admRepo.save(foundAdm);
+		}
+		else {
+			return null;
+		}		
+	}
+}

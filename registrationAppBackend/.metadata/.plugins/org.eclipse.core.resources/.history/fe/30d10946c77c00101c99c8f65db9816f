@@ -1,0 +1,26 @@
+package com.registrationAppBackend.service;
+
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.registrationAppBackend.entity.Admission;
+import com.registrationAppBackend.repo.AdmissionRepo;
+
+@Service
+public class AdmissionService {
+
+	@Autowired
+	AdmissionRepo admRepo;
+	
+	public Admission addAdmission(int user_id, Admission sentAdmission) {
+		return admRepo.save(sentAdmission);
+	}
+	
+	public Optional<Admission> getAdmissionByUserId(int sentId){
+		
+		return admRepo.findById(sentId);
+		
+	}
+}

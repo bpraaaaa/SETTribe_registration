@@ -1,0 +1,19 @@
+package com.registrationAppBackend.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.registrationAppBackend.entity.Admission;
+import com.registrationAppBackend.entity.User;
+import com.registrationAppBackend.repo.AdmissionRepo;
+
+@Service
+public class AdmissionService {
+
+	@Autowired
+	AdmissionRepo admRepo;
+	
+	public Admission addAdmission(Admission sentAdmission) {
+		return admRepo.save(sentAdmission);
+	}
+}

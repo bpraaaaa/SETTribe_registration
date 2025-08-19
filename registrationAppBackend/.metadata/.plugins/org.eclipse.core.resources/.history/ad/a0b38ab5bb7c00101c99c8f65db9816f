@@ -1,0 +1,50 @@
+package com.registrationAppBackend.controller;
+
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.registrationAppBackend.entity.Admission;
+import com.registrationAppBackend.service.AdmissionService;
+
+import jakarta.websocket.server.PathParam;
+
+@RestController
+@CrossOrigin(origins = "*")
+@RequestMapping("/admission")
+public class AdmissionController {
+	
+	@Autowired
+	AdmissionService admService;
+	
+	@GetMapping("/{user_id}")
+	public ResponseEntity<?> getAdmissionByUserId(@PathVariable int user_id) {
+		Optional<Admission> foundAdmission = admService.getAdmissionByUserId(user_id);
+		
+		if(foundAdmission.isPresent()) {
+			return new ResponseEntity<>(foundAdmission.get(), HttpStatus.OK);
+		}
+		else {
+			return new ResponseEntity<>("Wrong Credentials", HttpStatus.NOT_FOUND);
+		}
+
+	}// http://localhost:8080/admission/1
+	
+	@PostMapping("/add")
+	public Admission addAdmission(@RequestBody Admission sentAdmission) {
+		
+		return admService.addAdmission(sentAdmission);
+
+	}// http://localhost:8080/admission/add
+
+}

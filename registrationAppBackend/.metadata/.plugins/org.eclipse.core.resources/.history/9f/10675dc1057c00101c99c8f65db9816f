@@ -1,0 +1,5 @@
+package com.registrationAppBackend.repo;
+
+public interface UserRepo {
+
+}

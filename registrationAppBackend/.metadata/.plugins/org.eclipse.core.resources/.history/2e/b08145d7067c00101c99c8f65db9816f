@@ -1,0 +1,12 @@
+package com.registrationAppBackend.service;
+
+import org.springframework.stereotype.Service;
+
+import com.registrationAppBackend.repo.AdmissionRepo;
+
+@Service
+public class AdmissionService {
+
+	
+	AdmissionRepo admRepo;
+}
