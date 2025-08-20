@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +23,8 @@ public class AdmissionController {
 
 	@Autowired
 	AdmissionService admService;
+	
+	///get///
 
 	@GetMapping("/{user_id}")
 	public ResponseEntity<?> getAdmissionByUserId(@PathVariable int user_id) {
@@ -33,15 +36,38 @@ public class AdmissionController {
 			return new ResponseEntity<>("Wrong Credentials", HttpStatus.NOT_FOUND);
 		}
 	}// http://localhost:8080/admission/1
+	
 
+	///get///
+	///
+	///post///
+
+//	@PostMapping("/add/{user_id}")
+//	public Admission addAdmission(@PathVariable int user_id, @RequestBody Admission sentAdmission) {
+//		return admService.addAdmission(user_id, sentAdmission);
+//	}// http://localhost:8080/admission/add
+	
 	@PostMapping("/add/{user_id}")
-	public Admission addAdmission(@PathVariable int user_id, @RequestBody Admission sentAdmission) {
-		return admService.addAdmission(user_id, sentAdmission);
-	}// http://localhost:8080/admission/add
+	public ResponseEntity<?> addAdmission(@PathVariable int user_id, @RequestBody Admission sentAdmission) {
+			return new ResponseEntity<>(admService.addAdmission(user_id, sentAdmission), HttpStatus.OK);
+	}
+	
+	///post///
+	///
+	///put///
 	
 	@PutMapping("/update/{user_id}")
 	public Admission updateAdmission(@PathVariable int user_id, @RequestBody Admission sentAdmission) {
 		return admService.updateAdmission(user_id, sentAdmission);
 	}// http://localhost:8080/admission/update/4
+	
+	///put///
+	///
+	///delete///
+
+	@DeleteMapping("/delete/{adm_id}")
+	public void deleteByAdmId(@PathVariable int adm_id) {
+		admService.deleteByAdmId(adm_id);
+	}// http://localhost:8080/admission/delete/2
 
 }

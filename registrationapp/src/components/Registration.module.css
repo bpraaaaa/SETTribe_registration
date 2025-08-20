@@ -1,54 +1,122 @@
+/* Registration.module.css */
+
 .container {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  background: #f9f9f9;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #74ebd5, #9face6);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .form {
-  background: white;
-  padding: 2rem;
-  border-radius: 10px;
-  width: 320px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  text-align: center;
+  background: #fff;
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
 }
 
 .form h2 {
-  margin-bottom: 1rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
   color: #333;
 }
 
-input {
+.form input[type="text"],
+.form input[type="email"],
+.form input[type="tel"],
+.form input[type="password"],
+.form input[type="file"] {
   width: 100%;
-  padding: 0.7rem;
-  margin: 0.4rem 0;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  font-size: 14px;
+  padding: 0.9rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
 }
 
-button {
-  width: 100%;
-  padding: 0.8rem;
-  margin-top: 1rem;
-  background: #007bff;
+.form input:focus {
+  border-color: #2575fc;
+  box-shadow: 0 0 5px rgba(37, 117, 252, 0.4);
+  outline: none;
+}
+
+.disabled {
+  background: #f0f0f0;
+  cursor: not-allowed;
+}
+
+.passwordWrapper {
+  display: flex;
+  align-items: center;
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.passwordWrapper input {
+  flex: 1;
+  padding-right: 70px; /* space for button */
+}
+
+.showBtn {
+  position: absolute;
+  right: 8px;
+  padding: 6px 10px;
   border: none;
-  border-radius: 6px;
+  background: #2575fc;
   color: white;
-  font-size: 16px;
+  border-radius: 6px;
+  font-size: 0.8rem;
   cursor: pointer;
+  transition: background 0.2s ease;
 }
 
-button:hover {
-  background: #0056b3;
+.showBtn:hover {
+  background: #1b5fd8;
+}
+
+.error {
+  color: #e63946;
+  font-size: 0.85rem;
+  margin-top: -8px;
+  margin-bottom: 0.8rem;
+}
+
+button[type="submit"] {
+  padding: 0.9rem;
+  border: none;
+  border-radius: 8px;
+  background: #2575fc;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  margin-top: 0.5rem;
+}
+
+button[type="submit"]:hover {
+  background: #1b5fd8;
+}
+
+button[disabled] {
+  background: #ccc;
+  cursor: not-allowed;
 }
 
 .toggle {
   margin-top: 1rem;
-  font-size: 14px;
-  color: blue;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #2575fc;
   cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.toggle:hover {
   text-decoration: underline;
 }

@@ -19,6 +19,8 @@ public class AdmissionService {
 	@Autowired
 	AdmissionRepo admRepo;
 	
+	///get///
+	
 	public Admission getAdmissionByUserId(int sentId){
 		Optional<User> foundUser = userRepo.findById(sentId);
 		if(foundUser.isPresent()) {
@@ -28,11 +30,19 @@ public class AdmissionService {
 			return null;
 		}
 	}
+
+	///get///
+	///
+	///post///
 	
 	public Admission addAdmission(int user_id, Admission sentAdmission) {
 		sentAdmission.setUser(userRepo.getById(user_id));
 		return admRepo.save(sentAdmission);
 	}
+
+	///post///
+	///
+	///put///
 	
 	public Admission updateAdmission(int user_id, Admission sentAdmission) {
 		Optional<User> foundUser = userRepo.findById(user_id);
@@ -61,4 +71,14 @@ public class AdmissionService {
 			return null;
 		}		
 	}
+
+	///put///
+	///
+	///delete///
+
+	public void deleteByAdmId(int adm_id) {
+		admRepo.deleteById(adm_id);
+	}
+
+	///delete///
 }

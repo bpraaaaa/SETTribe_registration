@@ -16,6 +16,12 @@ const Registration = () => {
     confirmPassword: "",
   });
 
+  const [photo, setPhoto] = useState(null);
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [showPass, setShowPass] = useState(false);
+  const [showConfirmPass, setShowConfirmPass] = useState(false);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     let updated = { ...form, [name]: value };
@@ -28,54 +34,62 @@ const Registration = () => {
     setForm(updated);
   };
 
+  const handlePhotoChange = (e) => {
+    setPhoto(e.target.files[0]);
+  };
+
+  const validateForm = () => {
+    let newErrors = {};
+    if (!form.f_name) newErrors.f_name = "First name is required.";
+    if (!form.m_name) newErrors.m_name = "Middle name is required.";
+    if (!form.l_name) newErrors.l_name = "Last name is required.";
+    if (!form.mob) {
+      newErrors.mob = "Mobile number is required.";
+    } else if (!/^[6-9][0-9]{9}$/.test(form.mob)) {
+      newErrors.mob = "Mobile must be 10 digits and start with 6, 7, 8, or 9.";
+    }
+    if (!form.email) newErrors.email = "Email is required.";
+    if (!form.pass) newErrors.pass = "Password is required.";
+    if (form.pass !== form.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match.";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (
-      !form.f_name ||
-      !form.m_name ||
-      !form.l_name ||
-      !form.mob ||
-      !form.email ||
-      !form.pass ||
-      !form.confirmPassword
-    ) {
-      alert("Please fill in all required fields!");
-      return;
-    }
-
-    if (form.pass !== form.confirmPassword) {
-      alert("Passwords do not match!");
-      return;
-    }
-
-    if (!/^[0-9]{10}$/.test(form.mob)) {
-      alert("Mobile number must be 10 digits!");
-      return;
-    }
+    if (!validateForm()) return;
 
     try {
-      const res = await axios.post("http://localhost:8080/user/register", {
-        f_name: form.f_name,
-        m_name: form.m_name,
-        l_name: form.l_name,
-        mob: form.mob,
-        email: form.email,
-        pass: form.pass,
-      });
+      setLoading(true);
+      const formData = new FormData();
+      formData.append(
+        "sentUser",
+        new Blob([JSON.stringify(form)], { type: "application/json" })
+      );
+      if (photo) formData.append("image", photo);
 
-      alert(`Registration successful for ${res.data.fullName || form.email}`);
+      const res = await axios.post(
+        "http://localhost:8080/user/register",
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+
+      alert(`Registration successful for ${res.data.f_name || form.email}`);
       navigate("/login");
     } catch (err) {
-      console.error(err);
       alert(err.response?.data?.message || "Something went wrong!");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className={styles.container}>
       <form className={styles.form} onSubmit={handleSubmit}>
-        <h2>Register</h2>
+        <h2>Create Account</h2>
 
         <input
           type="text"
@@ -83,8 +97,9 @@ const Registration = () => {
           placeholder="First Name"
           value={form.f_name}
           onChange={handleChange}
-          required
         />
+        {errors.f_name && <p className={styles.error}>{errors.f_name}</p>}
+
         <input
           type="text"
           name="m_name"
@@ -92,14 +107,16 @@ const Registration = () => {
           value={form.m_name}
           onChange={handleChange}
         />
+
         <input
           type="text"
           name="l_name"
           placeholder="Last Name"
           value={form.l_name}
           onChange={handleChange}
-          required
         />
+        {errors.l_name && <p className={styles.error}>{errors.l_name}</p>}
+
         <input
           type="text"
           name="fullName"
@@ -107,15 +124,22 @@ const Registration = () => {
           value={form.fullName}
           readOnly
           disabled
+          className={styles.disabled}
         />
+
         <input
           type="tel"
           name="mob"
           placeholder="Mobile Number"
           value={form.mob}
           onChange={handleChange}
-          required
-          pattern="[0-9]{10}"
+        />
+        {errors.mob && <p className={styles.error}>{errors.mob}</p>}
+
+        <input
+          type="file"
+          accept=".jpg, .jpeg, .png"
+          onChange={handlePhotoChange}
         />
 
         <input
@@ -124,33 +148,52 @@ const Registration = () => {
           placeholder="Email"
           value={form.email}
           onChange={handleChange}
-          required
         />
-        <input
-          type="password"
-          name="pass"
-          placeholder="Password"
-          value={form.pass}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="password"
-          name="confirmPassword"
-          placeholder="Confirm Password"
-          value={form.confirmPassword}
-          onChange={handleChange}
-          required
-        />
+        {errors.email && <p className={styles.error}>{errors.email}</p>}
 
-        <button type="submit">Register</button>
+        <div className={styles.passwordWrapper}>
+          <input
+            type={showPass ? "text" : "password"}
+            name="pass"
+            placeholder="Password"
+            value={form.pass}
+            onChange={handleChange}
+          />
+          <button
+            type="button"
+            className={styles.showBtn}
+            onClick={() => setShowPass(!showPass)}
+          >
+            {showPass ? "Hide" : "Show"}
+          </button>
+        </div>
+        {errors.pass && <p className={styles.error}>{errors.pass}</p>}
 
-        <p
-          className={styles.toggle}
-          onClick={() => {
-            navigate("/login");
-          }}
-        >
+        <div className={styles.passwordWrapper}>
+          <input
+            type={showConfirmPass ? "text" : "password"}
+            name="confirmPassword"
+            placeholder="Confirm Password"
+            value={form.confirmPassword}
+            onChange={handleChange}
+          />
+          <button
+            type="button"
+            className={styles.showBtn}
+            onClick={() => setShowConfirmPass(!showConfirmPass)}
+          >
+            {showConfirmPass ? "Hide" : "Show"}
+          </button>
+        </div>
+        {errors.confirmPassword && (
+          <p className={styles.error}>{errors.confirmPassword}</p>
+        )}
+
+        <button type="submit" disabled={loading}>
+          {loading ? "Registering..." : "Register"}
+        </button>
+
+        <p className={styles.toggle} onClick={() => navigate("/login")}>
           Already a user? Login
         </p>
       </form>

@@ -9,7 +9,6 @@ const Admission = () => {
 
   const [sentUser, setSentUser] = useState();
   const [userExists, setUserExists] = useState(false);
-  //   const [admExists, setAdmExists] = useState(false);
 
   const [form, setForm] = useState({
     user: sentUser,
@@ -34,11 +33,11 @@ const Admission = () => {
     email: "",
   });
 
+  const [photo, setPhoto] = useState(null);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
   useEffect(() => {
-    // Fetch user details first
     axios
       .get(`http://localhost:8080/user/${userid}`)
       .then((res) => {
@@ -54,11 +53,8 @@ const Admission = () => {
           email: user.email || "",
         }));
       })
-      .catch(() => {
-        setError("Failed to load user details");
-      });
+      .catch(() => setError("Failed to load user details"));
 
-    // Check if admission already exists for this user
     axios
       .get(`http://localhost:8080/admission/${userid}`)
       .then((res) => {
@@ -67,29 +63,45 @@ const Admission = () => {
           setUserExists(true);
           setForm((prev) => ({
             ...prev,
-            ...admission, // pre-fill admission fields
+            ...admission,
             user: admission.user,
-            // f_name: admission.user.f_name || "",
-            // m_name: admission.user.m_name || "",
-            // l_name: admission.user.l_name || "",
-            // mob: admission.user.mob || "",
-            // email: admission.user.email || "",
           }));
         }
       })
-      .catch(() => {
-        setUserExists(false); // no admission found
-      });
+      .catch(() => setUserExists(false));
   }, [userid]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setForm({ ...form, [name]: type === "checkbox" ? checked : value });
+
+    if (name === "title") {
+      let updatedGender = form.gender;
+      if (value === "Mr.") updatedGender = "Male";
+      else if (value === "Mrs.") updatedGender = "Female";
+
+      setForm({
+        ...form,
+        title: value,
+        gender: updatedGender,
+      });
+    } else {
+      setForm({ ...form, [name]: type === "checkbox" ? checked : value });
+    }
+  };
+
+  const handlePhotoChange = (e) => {
+    setPhoto(e.target.files[0]);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log({
+
+    if (!/^[0-9]{12}$/.test(form.aadhaar)) {
+      alert("Aadhaar number must be 12 digits");
+      return;
+    }
+
+    const payload = {
       title: form.title,
       mother: form.mother,
       gender: form.gender,
@@ -103,101 +115,37 @@ const Admission = () => {
       religion: form.religion,
       caste_cate: form.caste_cate,
       caste: form.caste,
-      user: sentUser,
       handicap: form.handicap,
-    });
+      user: sentUser,
+    };
 
-    if (admExists) {
-      try {
-        await axios.put(`http://localhost:8080/admission/update/${userid}`, {
-          title: form.title,
-          mother: form.mother,
-          gender: form.gender,
-          addr: form.addr,
-          taluka: form.taluka,
-          district: form.district,
-          pin: form.pin,
-          state: form.state,
-          aadhaar: form.aadhaar,
-          dob: form.dob,
-          religion: form.religion,
-          caste_cate: form.caste_cate,
-          caste: form.caste,
-          user: sentUser,
-          handicap: form.handicap,
-        });
-        setMessage("Admission form updated successfully!");
-        setError("");
-        navigate(`/report/${userid}`);
-      } catch {
-        setError("Failed to update admission form");
-        setMessage("");
-      }
+    if (userExists) {
+      await axios.put(
+        `http://localhost:8080/admission/update/${userid}`,
+        payload
+      );
+      setMessage("Admission form updated successfully!");
     } else {
       try {
-        await axios.post("http://localhost:8080/admission/add", {
-          title: form.title,
-          mother: form.mother,
-          gender: form.gender,
-          addr: form.addr,
-          taluka: form.taluka,
-          district: form.district,
-          pin: form.pin,
-          state: form.state,
-          aadhaar: form.aadhaar,
-          dob: form.dob,
-          religion: form.religion,
-          caste_cate: form.caste_cate,
-          caste: form.caste,
-          user: sentUser,
-          handicap: form.handicap,
-        });
-        setMessage("Admission form submitted successfully!");
-        setError("");
-        navigate(`/report/${userid}`);
-      } catch {
-        setError("Failed to submit admission form");
-        setMessage("");
+        await axios.post(
+          `http://localhost:8080/admission/add/${userid}`,
+          payload
+        );
+      } catch (error) {
+        console.log(error);
       }
+      setMessage("Admission form submitted successfully!");
     }
+    setError("");
+    navigate(`/report/${userid}`);
   };
 
   return (
     <div className={styles.container}>
       <h2>Admission Form</h2>
       <form className={styles.form} onSubmit={handleSubmit}>
-        <label>
-          First Name
-          <input
-            type="text"
-            name="f_name"
-            value={form.f_name}
-            readOnly
-            disabled
-          />
-        </label>
-        <label>
-          Middle Name
-          <input
-            type="text"
-            name="m_name"
-            value={form.m_name}
-            readOnly
-            disabled
-          />
-        </label>
-        <label>
-          Last Name
-          <input
-            type="text"
-            name="l_name"
-            value={form.l_name}
-            readOnly
-            disabled
-          />
-        </label>
-        <label>
-          Title
+        <div className={styles.row}>
+          <label>Title</label>
           <select
             name="title"
             value={form.title}
@@ -208,43 +156,53 @@ const Admission = () => {
             <option value="Mr.">Mr.</option>
             <option value="Mrs.">Mrs.</option>
           </select>
-        </label>
+        </div>
 
-        <label>
-          Full Name
+        <div className={styles.row}>
+          <label>First Name</label>
           <input
             type="text"
-            name="fullName"
-            value={
-              form.title +
-              " " +
-              form.f_name +
-              " " +
-              form.m_name +
-              " " +
-              form.l_name
-            }
+            name="f_name"
+            value={form.f_name}
             readOnly
             disabled
           />
-        </label>
-        <label>
-          Mobile
-          <input type="text" name="mob" value={form.mob} readOnly disabled />
-        </label>
-        <label>
-          Email
-          <input
-            type="email"
-            name="email"
-            value={form.email}
-            readOnly
-            disabled
-          />
-        </label>
+        </div>
 
-        <label>
-          Mother’s Name
+        <div className={styles.row}>
+          <label>Middle Name</label>
+          <input
+            type="text"
+            name="m_name"
+            value={form.m_name}
+            readOnly
+            disabled
+          />
+        </div>
+
+        <div className={styles.row}>
+          <label>Last Name</label>
+          <input
+            type="text"
+            name="l_name"
+            value={form.l_name}
+            readOnly
+            disabled
+          />
+        </div>
+
+        <div className={styles.row}>
+          <label>Full Name</label>
+          <input
+            type="text"
+            value={`${form.title} ${form.f_name} ${form.m_name} ${form.l_name}`}
+            readOnly
+            disabled
+          />
+        </div>
+
+        <div className={styles.row}>
+          <label>Mother’s Name</label>
           <input
             type="text"
             name="mother"
@@ -252,35 +210,36 @@ const Admission = () => {
             onChange={handleChange}
             required
           />
-        </label>
+        </div>
 
-        <label>
-          Gender
+        <div className={styles.row}>
+          <label>Gender</label>
           <select
             name="gender"
             value={form.gender}
             onChange={handleChange}
             required
+            disabled={form.title === "Mr." || form.title === "Mrs."}
           >
             <option value="">Select Gender</option>
             <option value="Male">Male</option>
             <option value="Female">Female</option>
             <option value="Other">Other</option>
           </select>
-        </label>
+        </div>
 
-        <label>
-          Address
+        <div className={styles.row}>
+          <label>Address</label>
           <textarea
             name="addr"
             value={form.addr}
             onChange={handleChange}
             required
           />
-        </label>
+        </div>
 
-        <label>
-          Taluka
+        <div className={styles.row}>
+          <label>Taluka</label>
           <input
             type="text"
             name="taluka"
@@ -288,10 +247,10 @@ const Admission = () => {
             onChange={handleChange}
             required
           />
-        </label>
+        </div>
 
-        <label>
-          District
+        <div className={styles.row}>
+          <label>District</label>
           <input
             type="text"
             name="district"
@@ -299,10 +258,10 @@ const Admission = () => {
             onChange={handleChange}
             required
           />
-        </label>
+        </div>
 
-        <label>
-          PIN
+        <div className={styles.row}>
+          <label>PIN</label>
           <input
             type="number"
             name="pin"
@@ -310,10 +269,10 @@ const Admission = () => {
             onChange={handleChange}
             required
           />
-        </label>
+        </div>
 
-        <label>
-          State
+        <div className={styles.row}>
+          <label>State</label>
           <input
             type="text"
             name="state"
@@ -321,10 +280,26 @@ const Admission = () => {
             onChange={handleChange}
             required
           />
-        </label>
+        </div>
 
-        <label>
-          Aadhaar
+        <div className={styles.row}>
+          <label>Mobile</label>
+          <input type="text" name="mob" value={form.mob} readOnly disabled />
+        </div>
+
+        <div className={styles.row}>
+          <label>Email</label>
+          <input
+            type="email"
+            name="email"
+            value={form.email}
+            readOnly
+            disabled
+          />
+        </div>
+
+        <div className={styles.row}>
+          <label>Aadhaar</label>
           <input
             type="number"
             name="aadhaar"
@@ -332,10 +307,10 @@ const Admission = () => {
             onChange={handleChange}
             required
           />
-        </label>
+        </div>
 
-        <label>
-          Date of Birth
+        <div className={styles.row}>
+          <label>Date of Birth</label>
           <input
             type="date"
             name="dob"
@@ -343,10 +318,10 @@ const Admission = () => {
             onChange={handleChange}
             required
           />
-        </label>
+        </div>
 
-        <label>
-          Religion
+        <div className={styles.row}>
+          <label>Religion</label>
           <input
             type="text"
             name="religion"
@@ -354,10 +329,10 @@ const Admission = () => {
             onChange={handleChange}
             required
           />
-        </label>
+        </div>
 
-        <label>
-          Caste Category
+        <div className={styles.row}>
+          <label>Caste Category</label>
           <input
             type="text"
             name="caste_cate"
@@ -365,10 +340,10 @@ const Admission = () => {
             onChange={handleChange}
             required
           />
-        </label>
+        </div>
 
-        <label>
-          Caste
+        <div className={styles.row}>
+          <label>Caste</label>
           <input
             type="text"
             name="caste"
@@ -376,26 +351,66 @@ const Admission = () => {
             onChange={handleChange}
             required
           />
-        </label>
+        </div>
 
-        {/* caste certi */}
+        {/* caste_certi */}
+        <div className={styles.row}>
+          <label>Caste Certificate</label>
+          <input
+            type="file"
+            accept=".jpg, .jpeg, .png"
+            onChange={handlePhotoChange}
+          />
+        </div>
 
         {/* marksheet */}
-
-        <label className={styles.checkboxLabel}>
-          Handicap
+        <div className={styles.row}>
+          <label>Marksheet</label>
           <input
-            type="checkbox"
-            name="handicap"
-            checked={form.handicap}
-            onChange={handleChange}
+            type="file"
+            accept=".jpg, .jpeg, .png"
+            onChange={handlePhotoChange}
           />
-        </label>
+        </div>
 
-        <button type="submit">
-          {userExists ? "Update details" : "Submit details"}
-        </button>
-        <button onClick={() => navigate(`/report/${userid}`)}>Cancel</button>
+        {/* photo */}
+        <div className={styles.row}>
+          <label>Photo</label>
+          <input
+            type="file"
+            accept=".jpg, .jpeg, .png"
+            onChange={handlePhotoChange}
+          />
+        </div>
+
+        {/* sign */}
+        <div className={styles.row}>
+          <label>Signature</label>
+          <input
+            type="file"
+            accept=".jpg, .jpeg, .png"
+            onChange={handlePhotoChange}
+          />
+        </div>
+
+        <div className={styles.checkboxRow}>
+          <label className={styles.checkboxLabel}>
+            <input
+              type="checkbox"
+              name="handicap"
+              checked={form.handicap}
+              onChange={handleChange}
+            />
+            Handicap
+          </label>
+        </div>
+
+        <div className={styles.actions}>
+          <button type="submit">{userExists ? "Update" : "Submit"}</button>
+          <button type="button" onClick={() => navigate(`/report/${userid}`)}>
+            Cancel
+          </button>
+        </div>
 
         {message && <p className={styles.message}>{message}</p>}
         {error && <p className={styles.error}>{error}</p>}

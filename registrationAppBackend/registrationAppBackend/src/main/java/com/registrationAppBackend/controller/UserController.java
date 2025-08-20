@@ -1,9 +1,11 @@
 package com.registrationAppBackend.controller;
 
+import java.io.IOException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,7 +13,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.registrationAppBackend.entity.User;
 import com.registrationAppBackend.service.UserService;
@@ -23,7 +27,33 @@ public class UserController {
 
 	@Autowired
 	UserService userService;
+	
+	///get///
+	
+	@GetMapping("/{user_id}")
+	public Optional<User> getUserById(@PathVariable int user_id) {
+		return userService.getUserById(user_id);
+	}// http://localhost:8080/user/1
+	
+	@GetMapping("image/{user_id}")
+	public ResponseEntity<byte[]> getUserImageById(@PathVariable int user_id) {
+		Optional<User> foundUser = userService.getUserById(user_id);
+		
+		if(foundUser.isPresent() && foundUser.get().getPhoto()!=null) {
+			byte[] image = foundUser.get().getPhoto();
+// 			return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(image);
+ 			return ResponseEntity.ok().contentType(MediaType.valueOf("image/*")).body(image);
+		}
+		else {
+			return ResponseEntity.notFound().build();
+		}
+		
+	}// http://localhost:8080/user/image/1
 
+	///get///
+	///
+	///post///
+	
 	@PostMapping("/validate")
 	public ResponseEntity<?> validateUserByEmail(@RequestBody User sentUser) {
 
@@ -35,15 +65,32 @@ public class UserController {
 			return new ResponseEntity<>("Wrong Credentials", HttpStatus.UNAUTHORIZED);
 		}
 	}// http://localhost:8080/user/validate {"email":"pb@gmail.com","pass":"pass"}
-
+	
 	@PostMapping("/register")
-	public User registerUser(@RequestBody User sentUser) {
-		return userService.registerUser(sentUser);
+	public ResponseEntity<?> registerUser(@RequestPart User sentUser, @RequestPart MultipartFile image) {
+		try {
+			User addedUser = userService.registerUser(sentUser, image);
+			return new ResponseEntity<>(addedUser, HttpStatus.CREATED);
+		} catch (IOException e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}// http://localhost:8080/user/register
 
-	@GetMapping("/{user_id}")
-	public Optional<User> getUserById(@PathVariable int user_id) {
-		return userService.getUserById(user_id);
-	}// http://localhost:8080/user/1
+//	@PostMapping("/register")
+//	public User registerUser(@RequestBody User sentUser) {
+//		return userService.registerUser(sentUser);
+//	}// http://localhost:8080/user/register
+	
+	///post///
+	///
+	///put///
+	
 
+	
+	///put///
+	///
+	///delete///
+
+	///delete///
+	
 }

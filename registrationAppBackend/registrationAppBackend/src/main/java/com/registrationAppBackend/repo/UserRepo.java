@@ -9,9 +9,9 @@ import com.registrationAppBackend.entity.User;
 
 @Repository
 public interface UserRepo extends JpaRepository<User, Integer> {
-	
-	boolean existsByEmail(String email);
 
 	Optional<User> getUserByEmail(String email);
+	
+	boolean existsByEmail(String email);
 
 }

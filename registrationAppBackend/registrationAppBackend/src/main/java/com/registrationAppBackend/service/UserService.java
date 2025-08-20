@@ -1,9 +1,11 @@
 package com.registrationAppBackend.service;
 
+import java.io.IOException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.registrationAppBackend.entity.User;
 import com.registrationAppBackend.repo.UserRepo;
@@ -13,7 +15,17 @@ public class UserService {
 
 	@Autowired
 	UserRepo userRepo;
+	
+	///get///
+	
+	public Optional<User> getUserById(int user_id) {
+		return userRepo.findById(user_id);
+	}
 
+	///get///
+	///
+	///post///
+	
 	public Optional<User> validateUserByEmail(User sentUser) {
 		Optional<User> foundUser = userRepo.getUserByEmail(sentUser.getEmail());
 
@@ -24,16 +36,33 @@ public class UserService {
 		}
 	}
 
-	public User registerUser(User sentUser) {
+	public User registerUser(User sentUser, MultipartFile image) throws IOException {
 		if (userRepo.existsByEmail(sentUser.getEmail())) {
 			return null;
 		} else {
+			sentUser.setPhoto(image.getBytes());
 			return userRepo.save(sentUser);
 		}
 	}
 
-	public Optional<User> getUserById(int user_id) {
-		return userRepo.findById(user_id);
-	}
+//	public User registerUser(User sentUser) {
+//		if (userRepo.existsByEmail(sentUser.getEmail())) {
+//			return null;
+//		} else {
+//			return userRepo.save(sentUser);
+//		}
+//	}
+	
+	///post///
+	///
+	///put///
+	
+
+	
+	///put///
+	///
+	///delete///
+
+	///delete///
 
 }

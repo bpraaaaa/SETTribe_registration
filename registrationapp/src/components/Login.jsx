@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import styles from "./Login.module.css";
-
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -10,6 +9,7 @@ const Login = () => {
   const [form, setForm] = useState({ email: "", pass: "", captcha: "" });
   const [captcha, setCaptcha] = useState(generateCaptcha());
   const [error, setError] = useState("");
+  const [showPass, setShowPass] = useState(false);
 
   function generateCaptcha() {
     return Math.random().toString(36).substring(2, 7);
@@ -55,8 +55,9 @@ const Login = () => {
       <form onSubmit={handleSubmit} className={styles.form}>
         <h2>Login</h2>
 
+        {/* Email */}
         <input
-          type="text"
+          type="email"
           name="email"
           placeholder="Email ID"
           value={form.email}
@@ -64,14 +65,24 @@ const Login = () => {
           required
         />
 
-        <input
-          type="password"
-          name="pass"
-          placeholder="Password"
-          value={form.pass}
-          onChange={handleChange}
-          required
-        />
+        {/* Password with Show/Hide toggle */}
+        <div className={styles.passwordWrapper}>
+          <input
+            type={showPass ? "text" : "password"}
+            name="pass"
+            placeholder="Password"
+            value={form.pass}
+            onChange={handleChange}
+            required
+          />
+          <button
+            type="button"
+            className={styles.showPassBtn}
+            onClick={() => setShowPass(!showPass)}
+          >
+            {showPass ? "🙈" : "👁️"}
+          </button>
+        </div>
 
         {/* Captcha display */}
         <div className={styles.captchaBox}>
@@ -85,6 +96,7 @@ const Login = () => {
           </button>
         </div>
 
+        {/* Captcha input */}
         <input
           type="text"
           name="captcha"
@@ -94,17 +106,22 @@ const Login = () => {
           required
         />
 
+        {/* Error Message */}
         {error && <p className={styles.error}>{error}</p>}
 
-        <button type="submit">Login</button>
+        {/* Submit */}
+        <button type="submit" className={styles.submitBtn}>
+          Login
+        </button>
 
+        {/* Redirect */}
         <p
           className={styles.toggle}
           onClick={() => {
             navigate("/");
           }}
         >
-          Don't have an account? Register
+          Don't have an account? <span>Register</span>
         </p>
       </form>
     </div>

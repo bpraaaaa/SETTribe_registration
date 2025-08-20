@@ -3,78 +3,132 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: #f2f2f2;
+  background: linear-gradient(135deg, #74ebd5, #9face6);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .form {
-  background: white;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
-  width: 300px;
+  background: #fff;
+  padding: 2.2rem;
+  border-radius: 12px;
+  box-shadow: 0px 6px 16px rgba(0,0,0,0.15);
+  width: 340px;
   text-align: center;
+  animation: fadeIn 0.5s ease-in-out;
 }
 
 .form h2 {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
   color: #333;
+  font-size: 1.6rem;
 }
 
 input {
   width: 100%;
-  padding: 0.7rem;
-  margin: 0.5rem 0;
+  padding: 0.75rem;
+  margin: 0.6rem 0;
   border: 1px solid #ddd;
-  border-radius: 5px;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: 0.2s;
 }
 
-button {
-  width: 100%;
-  padding: 0.7rem;
-  margin-top: 1rem;
-  background: #4CAF50;
-  color: white;
+input:focus {
+  outline: none;
+  border-color: #4CAF50;
+  box-shadow: 0px 0px 6px rgba(76, 175, 80, 0.4);
+}
+
+/* Password field wrapper */
+.passwordWrapper {
+  position: relative;
+}
+
+.showPassBtn {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  background: none;
   border: none;
-  border-radius: 5px;
   cursor: pointer;
-}
-
-button:hover {
-  background: #45a049;
+  font-size: 18px;
 }
 
 .captchaBox {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 0.5rem 0;
+  margin: 0.7rem 0;
 }
 
 .captcha {
-  background: #eee;
-  padding: 0.5rem 1rem;
-  border-radius: 5px;
+  background: #f0f0f0;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
   font-family: monospace;
   font-weight: bold;
+  font-size: 16px;
+  letter-spacing: 2px;
 }
 
 .refresh {
-  background: #605c5c;
+  background: #007bff;
   border: none;
+  color: white;
+  padding: 0.4rem 0.6rem;
+  border-radius: 5px;
   cursor: pointer;
-  font-size: 18px;
+  font-size: 16px;
+}
+
+.refresh:hover {
+  background: #0056b3;
 }
 
 .error {
   color: red;
   font-size: 0.9rem;
-  margin: 0.5rem 0;
+  margin: 0.6rem 0;
+}
+
+.submitBtn {
+  width: 100%;
+  padding: 0.8rem;
+  margin-top: 1rem;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  transition: background 0.3s ease-in-out;
+}
+
+.submitBtn:hover {
+  background: #388e3c;
 }
 
 .toggle {
   margin-top: 1rem;
   font-size: 0.9rem;
-  color: blue;
+  color: #333;
+}
+
+.toggle span {
+  color: #007bff;
+  font-weight: 500;
   cursor: pointer;
-  text-decoration: underline;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

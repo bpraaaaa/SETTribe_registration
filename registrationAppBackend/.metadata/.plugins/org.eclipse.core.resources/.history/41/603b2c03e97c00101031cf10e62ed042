@@ -1,0 +1,39 @@
+package com.registrationAppBackend.service;
+
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.registrationAppBackend.entity.User;
+import com.registrationAppBackend.repo.UserRepo;
+
+@Service
+public class UserService {
+
+	@Autowired
+	UserRepo userRepo;
+
+	public Optional<User> validateUserByEmail(User sentUser) {
+		Optional<User> foundUser = userRepo.getUserByEmail(sentUser.getEmail());
+
+		if (foundUser.isPresent() && foundUser.get().getPass().equals(sentUser.getPass())) {
+			return foundUser;
+		} else {
+			return null;
+		}
+	}
+
+	public User registerUser(User sentUser) {
+		if (userRepo.existsByEmail(sentUser.getEmail())) {
+			return null;
+		} else {
+			return userRepo.save(sentUser);
+		}
+	}
+
+	public Optional<User> getUserById(int user_id) {
+		return userRepo.findById(user_id);
+	}
+
+}

@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
@@ -60,10 +61,21 @@ public class Admission {
 	@Column(length = 15, nullable = false)	
 	private String caste;
 
+	@Column(nullable = false)
 	private boolean handicap;
 	
-	//caste_certi; marksheet | required; sign (JPEG, JPG, PNG) | required
-
+//	// caste_certi
+//	@Lob
+//	private byte[] caste_certi;
+//	
+//	// marksheet | required?
+//	@Lob
+//	private byte[] marksheet;
+//	
+//	// sign (JPEG, JPG, PNG)? | required?
+//	@Lob
+//	private byte[] sign;
+	
 	////////////////////// admission -> user ////////////////////////////
 
 	@OneToOne

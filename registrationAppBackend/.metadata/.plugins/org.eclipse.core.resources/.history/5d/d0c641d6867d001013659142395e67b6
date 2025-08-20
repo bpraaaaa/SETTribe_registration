@@ -1,0 +1,75 @@
+package com.registrationAppBackend.entity;
+
+import java.util.Date;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import lombok.Data;
+
+@Data
+@Entity
+@Table(name = "admission")
+public class Admission {
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int adm_id;
+	
+	@Column(length = 4, nullable = false)
+	private String title;
+	
+	@Column(length = 15, nullable = false)
+	private String mother;
+	
+	@Column(length = 6, nullable = false)
+	private String gender;
+	
+	@Column(nullable = false)
+	private String addr;
+	
+	@Column(length = 15, nullable = false)
+	private String taluka;
+	
+	@Column(length = 15, nullable = false)
+	private String district;
+	
+	@Column(nullable = false)
+	private long pin;
+	
+	@Column(length = 15, nullable = false)	
+	private String state;
+	
+	@Column(nullable = false)
+	private long aadhaar;
+	
+	@Column(nullable = false)
+	private Date dob;
+	
+	@Column(length = 15, nullable = false)	
+	private String religion;
+	
+	@Column(length = 15, nullable = false)	
+	private String caste_cate;
+	
+	@Column(length = 15, nullable = false)	
+	private String caste;
+
+	private boolean handicap;
+	
+	//caste_certi; marksheet | required; sign (JPEG, JPG, PNG) | required
+
+	////////////////////// admission -> user ////////////////////////////
+
+	@OneToOne
+	@JoinColumn(name = "user", referencedColumnName = "user_id", nullable = false) // owning side
+	private User user;
+
+	////////////////////// admission -> user ////////////////////////////
+
+}
