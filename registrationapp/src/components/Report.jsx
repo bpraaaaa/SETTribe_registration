@@ -13,6 +13,7 @@ const Report = () => {
   const [sentUser, setSentUser] = useState(null);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const [showDocs, setShowDocs] = useState(false);
 
   useEffect(() => {
     setError("");
@@ -26,7 +27,9 @@ const Report = () => {
     axios
       .get(`http://localhost:8080/admission/${userid}`)
       .then((res) => setAdmissionData(res.data))
-      .catch((err) => console.log(err.response?.data?.message));
+      .catch((err) =>
+        console.log("no admission data", err.response?.data?.message)
+      );
   }, [userid]);
 
   const calculateAge = (dob) => {
@@ -46,9 +49,13 @@ const Report = () => {
       setError("Admission record not found for deletion.");
       return;
     }
-    if (window.confirm("Are you sure you want to delete this admission record?")) {
+    if (
+      window.confirm("Are you sure you want to delete this admission record?")
+    ) {
       try {
-        await axios.delete(`http://localhost:8080/admission/delete/${admissionData.adm_id}`);
+        await axios.delete(
+          `http://localhost:8080/admission/delete/${admissionData.adm_id}`
+        );
         setAdmissionData(null);
         setMessage("Admission deleted successfully!");
         setError("");
@@ -120,7 +127,9 @@ const Report = () => {
               <tbody>
                 <tr>
                   <th>Full Name</th>
-                  <td>{sentUser.f_name} {sentUser.m_name} {sentUser.l_name}</td>
+                  <td>
+                    {sentUser.f_name} {sentUser.m_name} {sentUser.l_name}
+                  </td>
                 </tr>
                 <tr>
                   <th>Mobile number</th>
@@ -137,11 +146,19 @@ const Report = () => {
           {message && <p className={styles.message}>{message}</p>}
           {error && <p className={styles.error}>{error}</p>}
 
-          <button className={styles.addBtn} onClick={() => navigate(`/admission/${userid}`)}>
+          <button
+            className={styles.addBtn}
+            onClick={() => navigate(`/admission/${userid}`)}
+          >
             Add Details
           </button>
-          <button onClick={handleExport} className={styles.exportBtn}>Export to Excel</button>
-          <button className={styles.logoutBtn} onClick={() => navigate("/login")}>
+          <button onClick={handleExport} className={styles.exportBtn}>
+            Export to Excel
+          </button>
+          <button
+            className={styles.logoutBtn}
+            onClick={() => navigate("/login")}
+          >
             Logout
           </button>
         </div>
@@ -170,35 +187,180 @@ const Report = () => {
           <tbody>
             <tr>
               <th>Full Name</th>
-              <td>{admissionData.title} {admissionData.user.f_name} {admissionData.user.m_name} {admissionData.user.l_name}</td>
+              <td>
+                {admissionData.title} {admissionData.user.f_name}{" "}
+                {admissionData.user.m_name} {admissionData.user.l_name}
+              </td>
             </tr>
-            <tr><th>Mother's Name</th><td>{admissionData.mother}</td></tr>
-            <tr><th>Gender</th><td>{admissionData.gender}</td></tr>
-            <tr><th>Address</th><td>{admissionData.addr}</td></tr>
-            <tr><th>Taluka</th><td>{admissionData.taluka}</td></tr>
-            <tr><th>District</th><td>{admissionData.district}</td></tr>
-            <tr><th>PIN code</th><td>{admissionData.pin}</td></tr>
-            <tr><th>State</th><td>{admissionData.state}</td></tr>
-            <tr><th>Mobile number</th><td>{admissionData.user.mob}</td></tr>
-            <tr><th>Email ID</th><td>{admissionData.user.email}</td></tr>
-            <tr><th>Aadhaar number</th><td>{admissionData.aadhaar}</td></tr>
-            <tr><th>Date of Birth</th><td>{new Date(admissionData.dob).toLocaleDateString()}</td></tr>
-            <tr><th>Age</th><td>{calculateAge(admissionData.dob)}</td></tr>
-            <tr><th>Religion</th><td>{admissionData.religion}</td></tr>
-            <tr><th>Caste Category</th><td>{admissionData.caste_cate}</td></tr>
-            <tr><th>Caste</th><td>{admissionData.caste}</td></tr>
-            <tr><th>Handicap</th><td>{admissionData.handicap ? "Yes" : "No"}</td></tr>
+            <tr>
+              <th>Mother's Name</th>
+              <td>{admissionData.mother}</td>
+            </tr>
+            <tr>
+              <th>Gender</th>
+              <td>{admissionData.gender}</td>
+            </tr>
+            <tr>
+              <th>Address</th>
+              <td>{admissionData.addr}</td>
+            </tr>
+            <tr>
+              <th>Taluka</th>
+              <td>{admissionData.taluka}</td>
+            </tr>
+            <tr>
+              <th>District</th>
+              <td>{admissionData.district}</td>
+            </tr>
+            <tr>
+              <th>PIN code</th>
+              <td>{admissionData.pin}</td>
+            </tr>
+            <tr>
+              <th>State</th>
+              <td>{admissionData.state}</td>
+            </tr>
+            <tr>
+              <th>Mobile number</th>
+              <td>{admissionData.user.mob}</td>
+            </tr>
+            <tr>
+              <th>Email ID</th>
+              <td>{admissionData.user.email}</td>
+            </tr>
+            <tr>
+              <th>Aadhaar number</th>
+              <td>{admissionData.aadhaar}</td>
+            </tr>
+            <tr>
+              <th>Date of Birth</th>
+              <td>{new Date(admissionData.dob).toLocaleDateString()}</td>
+            </tr>
+            <tr>
+              <th>Age</th>
+              <td>{calculateAge(admissionData.dob)}</td>
+            </tr>
+            <tr>
+              <th>Religion</th>
+              <td>{admissionData.religion}</td>
+            </tr>
+            <tr>
+              <th>Caste Category</th>
+              <td>{admissionData.caste_cate}</td>
+            </tr>
+            <tr>
+              <th>Caste</th>
+              <td>{admissionData.caste}</td>
+            </tr>
+            <tr>
+              <th>Handicap</th>
+              <td>{admissionData.handicap ? "Yes" : "No"}</td>
+            </tr>
           </tbody>
         </table>
+
+        {/* {admissionData.caste_certi && (
+          <div className={styles.photoSection}>
+            <img
+              src={`http://localhost:8080/admission/certi/image/${userid}`}
+              alt="Caste certificate"
+              className={styles.profilePhoto}
+            />
+          </div>
+        )}
+
+        {admissionData.marksheet && (
+          <div className={styles.photoSection}>
+            <img
+              src={`http://localhost:8080/admission/marks/image/${userid}`}
+              alt="Caste certificate"
+              className={styles.profilePhoto}
+            />
+          </div>
+        )}
+
+        {admissionData.sign && (
+          <div className={styles.photoSection}>
+            <img
+              src={`http://localhost:8080/admission/sign/image/${userid}`}
+              alt="Caste certificate"
+              className={styles.profilePhoto}
+            />
+          </div>
+        )} */}
+
+
+          {/* Dropdown Toggle */}
+        <div className={styles.dropdownSection}>
+          <button
+            className={styles.dropdownBtn}
+            onClick={() => setShowDocs(!showDocs)}
+          >
+            {showDocs ? "Hide Documents ▲" : "Show Documents ▼"}
+          </button>
+        </div>
+
+        {/* Conditional Images */}
+        {showDocs && (
+
+        <div className={styles.imagesContainer}>
+          {admissionData.caste_certi && (
+            <div>
+              <img
+                src={`http://localhost:8080/admission/certi/image/${userid}`}
+                alt="Caste Certificate"
+                className={styles.otherPhoto}
+              />
+              <p className={styles.photoLabel}>Caste Certificate</p>
+            </div>
+          )}
+
+          {admissionData.marksheet && (
+            <div >
+              <img
+                src={`http://localhost:8080/admission/marks/image/${userid}`}
+                alt="Marksheet"
+                className={styles.otherPhoto}
+              />
+              <p className={styles.photoLabel}>Marksheet</p>
+            </div>
+          )}
+
+          {admissionData.sign && (
+            <div >
+              <img
+                src={`http://localhost:8080/admission/sign/image/${userid}`}
+                alt="Signature"
+                className={styles.otherPhoto}
+              />
+              <p className={styles.photoLabel}>Signature</p>
+            </div>
+          )}
+        </div>
+        )}
 
         {message && <p className={styles.message}>{message}</p>}
         {error && <p className={styles.error}>{error}</p>}
 
         <div className={styles.btnGroup}>
-          <button className={styles.updateBtn} onClick={() => navigate(`/admission/${userid}`)}>Add/Edit Details</button>
-          <button onClick={handleDelete} className={styles.delete}>Delete</button>
-          <button onClick={handleExport} className={styles.exportBtn}>Export to Excel</button>
-          <button className={styles.logoutBtn} onClick={() => navigate("/login")}>Logout</button>
+          <button
+            className={styles.updateBtn}
+            onClick={() => navigate(`/admission/${userid}`)}
+          >
+            Add/Edit Details
+          </button>
+          <button onClick={handleDelete} className={styles.delete}>
+            Delete
+          </button>
+          <button onClick={handleExport} className={styles.exportBtn}>
+            Export to Excel
+          </button>
+          <button
+            className={styles.logoutBtn}
+            onClick={() => navigate("/login")}
+          >
+            Logout
+          </button>
         </div>
       </div>
     </div>

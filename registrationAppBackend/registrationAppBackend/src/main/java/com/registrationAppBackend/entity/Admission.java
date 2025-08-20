@@ -64,17 +64,17 @@ public class Admission {
 	@Column(nullable = false)
 	private boolean handicap;
 	
-//	// caste_certi
-//	@Lob
-//	private byte[] caste_certi;
-//	
-//	// marksheet | required?
-//	@Lob
-//	private byte[] marksheet;
-//	
-//	// sign (JPEG, JPG, PNG)? | required?
-//	@Lob
-//	private byte[] sign;
+	// caste_certi
+	@Lob
+	private byte[] caste_certi;
+	
+//	 marksheet | required?
+	@Lob
+	private byte[] marksheet;
+	
+	// sign (JPEG, JPG, PNG) | required?
+	@Lob
+	private byte[] sign;
 	
 	////////////////////// admission -> user ////////////////////////////
 

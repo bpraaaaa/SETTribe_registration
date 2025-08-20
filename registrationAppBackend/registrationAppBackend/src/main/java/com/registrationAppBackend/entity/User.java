@@ -36,7 +36,7 @@ public class User {
 	@Column(length = 15, nullable = false)
 	private String pass;
 	
-	//photo (JPEG, JPG, PNG)? | required?
+	//photo (JPEG, JPG, PNG) | required?
 	@Lob
 	private byte[] photo;
 	

@@ -41,13 +41,12 @@ public class UserController {
 		
 		if(foundUser.isPresent() && foundUser.get().getPhoto()!=null) {
 			byte[] image = foundUser.get().getPhoto();
-// 			return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(image);
- 			return ResponseEntity.ok().contentType(MediaType.valueOf("image/*")).body(image);
+ 			return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(image);
+// 			return ResponseEntity.ok().contentType(MediaType.valueOf("image/*")).body(image);
 		}
 		else {
 			return ResponseEntity.notFound().build();
 		}
-		
 	}// http://localhost:8080/user/image/1
 
 	///get///
@@ -67,7 +66,8 @@ public class UserController {
 	}// http://localhost:8080/user/validate {"email":"pb@gmail.com","pass":"pass"}
 	
 	@PostMapping("/register")
-	public ResponseEntity<?> registerUser(@RequestPart User sentUser, @RequestPart MultipartFile image) {
+	public ResponseEntity<?> registerUser(@RequestPart User sentUser, 
+											@RequestPart MultipartFile image) {
 		try {
 			User addedUser = userService.registerUser(sentUser, image);
 			return new ResponseEntity<>(addedUser, HttpStatus.CREATED);
@@ -75,17 +75,10 @@ public class UserController {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}// http://localhost:8080/user/register
-
-//	@PostMapping("/register")
-//	public User registerUser(@RequestBody User sentUser) {
-//		return userService.registerUser(sentUser);
-//	}// http://localhost:8080/user/register
 	
 	///post///
 	///
 	///put///
-	
-
 	
 	///put///
 	///

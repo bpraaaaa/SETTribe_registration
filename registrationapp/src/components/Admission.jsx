@@ -33,7 +33,10 @@ const Admission = () => {
     email: "",
   });
 
-  const [photo, setPhoto] = useState(null);
+  const [certi, setCerti] = useState(null);
+  const [marks, setMarks] = useState(null);
+  const [sign, setSign] = useState(null);
+
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
@@ -89,8 +92,14 @@ const Admission = () => {
     }
   };
 
-  const handlePhotoChange = (e) => {
-    setPhoto(e.target.files[0]);
+  const handleCertiChange = (e) => {
+    setCerti(e.target.files[0]);
+  };
+  const handleMarksChange = (e) => {
+    setMarks(e.target.files[0]);
+  };
+  const handleSignChange = (e) => {
+    setSign(e.target.files[0]);
   };
 
   const handleSubmit = async (e) => {
@@ -101,43 +110,47 @@ const Admission = () => {
       return;
     }
 
-    const payload = {
-      title: form.title,
-      mother: form.mother,
-      gender: form.gender,
-      addr: form.addr,
-      taluka: form.taluka,
-      district: form.district,
-      pin: form.pin,
-      state: form.state,
-      aadhaar: form.aadhaar,
-      dob: form.dob,
-      religion: form.religion,
-      caste_cate: form.caste_cate,
-      caste: form.caste,
-      handicap: form.handicap,
-      user: sentUser,
-    };
-
     if (userExists) {
-      await axios.put(
-        `http://localhost:8080/admission/update/${userid}`,
-        payload
-      );
-      setMessage("Admission form updated successfully!");
-    } else {
-      try {
-        await axios.post(
-          `http://localhost:8080/admission/add/${userid}`,
-          payload
+      const formData = new FormData();
+        formData.append(
+          "sentAdmission",
+          new Blob([JSON.stringify(form)], { type: "application/json" })
         );
-      } catch (error) {
-        console.log(error);
-      }
-      setMessage("Admission form submitted successfully!");
+        if (certi) formData.append("certi_image", certi);
+        if (marks) formData.append("marks_image", marks);
+        if (sign) formData.append("sign_image", sign);
+console.log(formData);
+
+        const res = await axios.put(
+          `http://localhost:8080/admission/update/${userid}`,
+          formData,
+          { headers: { "Content-Type": "multipart/form-data" } }
+        );
+
+        alert(`Updation successful for ${res.data.f_name || form.email}`);
+        setMessage("Admission form updated successfully!");        
+        navigate(`/report/${userid}`);
+      
+    } else {
+        const formData = new FormData();
+        formData.append(
+          "sentAdmission",
+          new Blob([JSON.stringify(form)], { type: "application/json" })
+        );
+        if (certi) formData.append("certi_image", certi);
+        if (marks) formData.append("marks_image", marks);
+        if (sign) formData.append("sign_image", sign);
+
+        const res = await axios.post(
+          `http://localhost:8080/admission/add/${userid}`,
+          formData,
+          { headers: { "Content-Type": "multipart/form-data" } }
+        );
+
+        alert(`Registration successful for ${res.data.f_name || form.email}`);
+        setMessage("Admission form submitted successfully!");
+        navigate(`/report/${userid}`);
     }
-    setError("");
-    navigate(`/report/${userid}`);
   };
 
   return (
@@ -359,7 +372,7 @@ const Admission = () => {
           <input
             type="file"
             accept=".jpg, .jpeg, .png"
-            onChange={handlePhotoChange}
+            onChange={handleCertiChange}
           />
         </div>
 
@@ -369,11 +382,11 @@ const Admission = () => {
           <input
             type="file"
             accept=".jpg, .jpeg, .png"
-            onChange={handlePhotoChange}
+            onChange={handleMarksChange}
           />
         </div>
 
-        {/* photo */}
+        {/* photo
         <div className={styles.row}>
           <label>Photo</label>
           <input
@@ -381,7 +394,7 @@ const Admission = () => {
             accept=".jpg, .jpeg, .png"
             onChange={handlePhotoChange}
           />
-        </div>
+        </div> */}
 
         {/* sign */}
         <div className={styles.row}>
@@ -389,7 +402,7 @@ const Admission = () => {
           <input
             type="file"
             accept=".jpg, .jpeg, .png"
-            onChange={handlePhotoChange}
+            onChange={handleSignChange}
           />
         </div>
 

@@ -44,14 +44,6 @@ public class UserService {
 			return userRepo.save(sentUser);
 		}
 	}
-
-//	public User registerUser(User sentUser) {
-//		if (userRepo.existsByEmail(sentUser.getEmail())) {
-//			return null;
-//		} else {
-//			return userRepo.save(sentUser);
-//		}
-//	}
 	
 	///post///
 	///

@@ -1,9 +1,11 @@
 package com.registrationAppBackend.service;
 
+import java.io.IOException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.registrationAppBackend.entity.Admission;
 import com.registrationAppBackend.entity.User;
@@ -35,16 +37,19 @@ public class AdmissionService {
 	///
 	///post///
 	
-	public Admission addAdmission(int user_id, Admission sentAdmission) {
+	public Admission addAdmission(int user_id, Admission sentAdmission, MultipartFile certi_image, MultipartFile marks_image, MultipartFile sign_image) throws IOException {
 		sentAdmission.setUser(userRepo.getById(user_id));
+		sentAdmission.setCaste_certi(certi_image.getBytes());
+		sentAdmission.setMarksheet(marks_image.getBytes());
+		sentAdmission.setSign(sign_image.getBytes());
 		return admRepo.save(sentAdmission);
 	}
 
 	///post///
 	///
 	///put///
-	
-	public Admission updateAdmission(int user_id, Admission sentAdmission) {
+
+	public Admission updateAdmission(int user_id, Admission sentAdmission, MultipartFile certi_image, MultipartFile marks_image, MultipartFile sign_image) throws IOException {
 		Optional<User> foundUser = userRepo.findById(user_id);
 		if(foundUser.isPresent()) {
 			Admission foundAdm = admRepo.findByUser(foundUser);
@@ -65,13 +70,17 @@ public class AdmissionService {
 			foundAdm.setTitle(sentAdmission.getTitle());
 			foundAdm.setUser(sentAdmission.getUser());
 			
+			foundAdm.setCaste_certi(certi_image.getBytes());
+			foundAdm.setMarksheet(marks_image.getBytes());
+			foundAdm.setSign(sign_image.getBytes());
+			
 			return admRepo.save(foundAdm);
 		}
 		else {
 			return null;
 		}		
 	}
-
+	
 	///put///
 	///
 	///delete///
